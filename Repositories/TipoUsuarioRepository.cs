@@ -14,24 +14,40 @@ namespace EventPlus.WebAPI.Repositories
             _context = context;
         }
 
-        public Task Atualizar(Guid id, TipoUsuario tipoUsuario)
+        public async Task Atualizar(Guid id, TipoUsuario tipoUsuario)
         {
-            throw new NotImplementedException();
+            var tipoUsuarioBuscado = await _context.TipoUsuario.FindAsync(id);
+
+            if (tipoUsuarioBuscado != null)
+            {
+                tipoUsuarioBuscado.Titulo = tipoUsuario.Titulo;
+                _context.TipoUsuario.Update(tipoUsuarioBuscado);
+                await _context.SaveChangesAsync();
+            }
+
         }
 
-        public Task<TipoUsuario> BuscarPorId(Guid id)
+        public async Task<TipoUsuario?> BuscarPorId(Guid id)
         {
-            throw new NotImplementedException();
+            return await _context.TipoUsuario.FirstOrDefaultAsync(t => t.IdTipoUsuario == id);
         }
 
-        public Task Cadastrar(TipoUsuario tipoUsuario)
+        public async Task Cadastrar(TipoUsuario tipoUsuario)
         {
-            throw new NotImplementedException();
+            await _context.TipoUsuario.AddAsync(tipoUsuario);
+
+            await _context.SaveChangesAsync();
         }
 
-        public Task Deletar(Guid id)
+        public async Task Deletar(Guid id)
         {
-            throw new NotImplementedException();
+            var tipoUsuarioBuscado = await _context.TipoUsuario.FindAsync(id);
+
+            if (tipoUsuarioBuscado != null)
+            {
+                _context.TipoUsuario.Remove(tipoUsuarioBuscado);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<List<TipoUsuario>> Listar()

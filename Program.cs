@@ -1,4 +1,4 @@
-using EventPlus.WebAPI.Contexts;
+using EventPlus.WebAPI.BdContextEvent;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -9,9 +9,14 @@ builder.Services.AddDbContext<EventContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConection")));
 
 builder.Services.AddScoped<ITipoUsuario, TipoUsuarioRepository>();
+builder.Services.AddScoped<ITipoEvento, TipoEventoRepository>();
+
+//Registra o serviço de controller, mapeia automaticamente o serviço da pasta/Controllers
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+//Mapeia as rotas definidas nos controllers, com os atributos [Route]: api/controller 
+app.MapControllers();
 
 app.Run();
