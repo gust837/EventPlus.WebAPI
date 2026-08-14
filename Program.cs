@@ -10,6 +10,8 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConection
 
 builder.Services.AddScoped<ITipoUsuario, TipoUsuarioRepository>();
 builder.Services.AddScoped<ITipoEvento, TipoEventoRepository>();
+builder.Services.AddScoped<IUsuario, UsuarioRepository>();
+builder.Services.AddScoped<IInstituicao, InstituicaoRepository>();
 
 //Registra o serviço de controller, mapeia automaticamente o serviço da pasta/Controllers
 builder.Services.AddControllers();

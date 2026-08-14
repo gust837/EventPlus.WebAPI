@@ -37,4 +37,5 @@ public partial class Usuario
 
     [InverseProperty("IdUsuarioNavigation")]
     public virtual ICollection<Presenca> Presenca { get; set; } = new List<Presenca>();
+
 }

@@ -32,7 +32,7 @@ namespace EventPlus.WebAPI.Controllers
 
 
         /// <summary>
-        /// Lista todos os perfils de usuarios
+        /// Lista todos os tipos de evento
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -51,9 +51,9 @@ namespace EventPlus.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Cadastra um novo perfil de usuario
+        /// Cadastra um novo perfil de TipoEvento
         /// </summary>
-        /// <param name="tipoEvento">Perfil do usuario a ser cadastrado</param>
+        /// <param name="tipoEvento">Perfil do tipo de evento a ser cadastrado</param>
         /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Cadastrar([FromBody] TipoEventoDTO dto)
@@ -69,7 +69,7 @@ namespace EventPlus.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Esse metodo atualiza o titulo usuario com base no id
+        /// Esse metodo atualiza o titulo de tipo evento com base no id
         /// </summary>
         /// <param name="id">Id que sera atualizado</param>
         /// <param name="dto">Titulo que sera atualizado</param>
@@ -88,7 +88,7 @@ namespace EventPlus.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Remove um perfil de usuario pelo ID
+        /// Remove um perfil de tipo evento pelo ID
         /// </summary>
         /// <param name="id">Id do perfil a ser removido</param>
         /// 

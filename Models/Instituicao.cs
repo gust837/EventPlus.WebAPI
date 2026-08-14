@@ -24,7 +24,7 @@ public partial class Instituicao
 
     [StringLength(100)]
     [Unicode(false)]
-    public string Endereço { get; set; } = null!;
+    public string Endereco { get; set; } = null!;
 
     [InverseProperty("IdInstituicaoNavigation")]
     public virtual ICollection<Evento> Evento { get; set; } = new List<Evento>();
