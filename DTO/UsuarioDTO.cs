@@ -11,20 +11,22 @@ public class UsuarioDTO
     /// Nome do usuario
     /// </summary>
     [Required(ErrorMessage = "O titulo é obrigatorio")]
-    [StringLength(100, ErrorMessage = "O titulo pode ter no máximo 100 caracteres.")]
+    [StringLength(100, ErrorMessage = "O Nome pode ter no máximo 100 caracteres.")]
     public string Nome { get; set; } = string.Empty;
 
     /// <summary>
     /// Email do usuario
     /// </summary>
-    [Required(ErrorMessage = "O email é obrigatorio")]
-    [StringLength(100, ErrorMessage = "O email pode ter no máximo 100 caracteres.")]
+    [Required(ErrorMessage = "Campo obrigatorio")]
+    [EmailAddress(ErrorMessage = "O email é obrigatório.")]
     public string Email { get; set; } = string.Empty;
 
     /// <summary>
     /// Senha do usuario
     /// </summary>
     [Required(ErrorMessage = "A senha é obrigatória")]
-    [StringLength(64, ErrorMessage = "A senha pode ter no máximo 60 caracteres")]
+    [StringLength(60, MinimumLength = 8, ErrorMessage = "A senha deve ter entre 8 e 60 caracteres")]
     public string Senha { get; set; } = string.Empty;
+
+    public Guid? IdTipoUsuario { get; set;  }
 }

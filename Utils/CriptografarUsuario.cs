@@ -1,6 +1,4 @@
-﻿using BCrypt.Net;
-
-namespace SenaiHub.Applications.Autenticacao
+﻿namespace EventPlus.WebAPI.Utils
 {
     public static class CriptografarUsuario
     {

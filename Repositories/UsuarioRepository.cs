@@ -1,6 +1,7 @@
 ﻿using EventPlus.WebAPI.BdContextEvent;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
+using EventPlus.WebAPI.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventPlus.WebAPI.Repositories
@@ -31,7 +32,21 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task<Usuario?> BuscarPorEmailESenha(string email, string senha)
         {
-            return await _context.Usuario.FirstOrDefaultAsync(u => u.Email == email && u.Senha == senha);
+            var usuario = await _context.Usuario.FirstOrDefaultAsync(u => u.Email == email && u.Senha == senha);
+
+            if (usuario == null)
+            {
+                return null;
+            }
+
+            bool senhaValida = CriptografarUsuario.VerificarSenha(senha, usuario.Senha);
+
+            if (!senhaValida)
+            {
+                return null;                
+            }
+
+            return usuario;
         }
 
         public async Task<Usuario?> BuscarPorId(Guid id)
@@ -39,9 +54,10 @@ namespace EventPlus.WebAPI.Repositories
             return await _context.Usuario.FirstOrDefaultAsync(t => t.IdUsuario == id);
         }
 
-        public async Task Cadastrar(Usuario Usuario)
+        public async Task Cadastrar(Usuario usuario)
         {
-            await _context.Usuario.AddAsync(Usuario);
+
+            await _context.Usuario.AddAsync(usuario);
 
             await _context.SaveChangesAsync();
         }
@@ -59,7 +75,7 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task<List<Usuario>> Listar()
         {
-            return await _context.Usuario.AsNoTracking().ToListAsync();
+            return await _context.Usuario.Include(e => e.IdTipoUsuarioNavigation).AsNoTracking().ToListAsync();
         }
     }
 }

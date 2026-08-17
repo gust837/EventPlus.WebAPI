@@ -1,10 +1,10 @@
 ﻿using EventPlus.WebAPI.DTO;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
+using EventPlus.WebAPI.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using SenaiHub.Applications.Autenticacao;
 
 namespace EventPlus.WebAPI.Controller
 {
@@ -64,16 +64,24 @@ namespace EventPlus.WebAPI.Controller
             {
                 Nome = dto.Nome,
                 Email = dto.Email,
-                Senha = CriptografarUsuario.CriptografarSenha(dto.Senha)
+                Senha = CriptografarUsuario.CriptografarSenha(dto.Senha),
+                IdTipoUsuario = dto.IdTipoUsuario
             };
 
-            await _usuario.Cadastrar(usuarioBuscado);
+            try
+            {
+                await _usuario.Cadastrar(usuarioBuscado);
+                return StatusCode(201, usuarioBuscado);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.InnerException.Message);
+            }
 
-            return StatusCode(201, usuarioBuscado);
         }
 
         /// <summary>
-        /// Esse metodo atualiza o titulo usuario com base no id
+        /// Esse metodo atualiza o nome, email e senha do usuario com base no id
         /// </summary>
         /// <param name="id">Id que sera atualizado</param>
         /// <param name="dto">Titulo que sera atualizado</param>
@@ -104,17 +112,6 @@ namespace EventPlus.WebAPI.Controller
         {
             await _usuario.Deletar(id);
             return NoContent();
-        }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
-        {
-            var usuario = await _usuario.FirstOrDefaultAsync(u => u.Email == request.Email);
-
-            if (usuario is null || !CriptografarUsuario.VerificarSenha(request.Senha, usuario.SenhaHash))
-                return Unauthorized("E-mail ou senha inválidos.");
-
-            return Ok(new { mensagem = "Login realizado com sucesso!", usuario.Email });
         }
     }
 }
