@@ -32,7 +32,7 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task<Usuario?> BuscarPorEmailESenha(string email, string senha)
         {
-            var usuario = await _context.Usuario.FirstOrDefaultAsync(u => u.Email == email && u.Senha == senha);
+            var usuario = await _context.Usuario.FirstOrDefaultAsync(u => u.Email == email);
 
             if (usuario == null)
             {
@@ -56,6 +56,7 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task Cadastrar(Usuario usuario)
         {
+            usuario.Senha = CriptografarUsuario.CriptografarSenha(usuario.Senha);
 
             await _context.Usuario.AddAsync(usuario);
 

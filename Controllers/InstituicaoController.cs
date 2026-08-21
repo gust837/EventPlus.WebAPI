@@ -24,7 +24,7 @@ namespace EventPlus.WebAPI.Controllers
 
             if (instituicaoBuscada == null)
             {
-                return NotFound("Tipo evento não encontrado!");
+                return NotFound("Instituição não encontrada!");
             }
 
             return Ok(instituicaoBuscada);

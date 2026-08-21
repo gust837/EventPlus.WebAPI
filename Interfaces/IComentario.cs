@@ -13,5 +13,7 @@ namespace EventPlus.WebAPI.Interfaces
         Task Cadastrar(Comentario comentario);
 
         Task Deletar(Guid id);
+
+        Task Atualizar(Guid id, Comentario comentario);
     }
 }

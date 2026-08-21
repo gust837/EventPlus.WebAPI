@@ -14,6 +14,18 @@ namespace EventPlus.WebAPI.Repositories
             _context = context;
         }
 
+        public async Task Atualizar(Guid id, Comentario comentario)
+        {
+            var comentarioBuscado = await _context.Comentario.FindAsync(id);
+
+            if(comentarioBuscado != null)
+            {
+                comentarioBuscado.Descricao = comentario.Descricao;
+                comentarioBuscado.DataComentario = comentario.DataComentario;
+                comentarioBuscado.IdUsuario = comentario.IdUsuario;
+            }
+        }
+
         public async Task<Comentario?> BuscarPorId(Guid id)
         {
             return await _context.Comentario.FirstOrDefaultAsync();

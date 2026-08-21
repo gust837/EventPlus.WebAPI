@@ -66,5 +66,28 @@ namespace EventPlus.WebAPI.Controllers
                 return BadRequest(ex.InnerException.Message);
             }
         }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> Atualizar(Guid id, [FromBody] ComentarioDTO dto)
+        {
+            var comentarioBuscado = new Comentario
+            {
+                Descricao = dto.Descricao,
+                DataComentario = dto.DataComentario,
+                IdEvento = dto.IdEvento,
+                IdUsuario = dto.IdUsuario
+            };
+
+            await _comentario.Atualizar(id, comentarioBuscado);
+
+            return Ok(comentarioBuscado);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Deletar(Guid id)
+        {
+            await _comentario.Deletar(id);
+            return NoContent();
+        }
     }
 }

@@ -64,7 +64,7 @@ namespace EventPlus.WebAPI.Controller
             {
                 Nome = dto.Nome,
                 Email = dto.Email,
-                Senha = CriptografarUsuario.CriptografarSenha(dto.Senha),
+                Senha = dto.Senha,
                 IdTipoUsuario = dto.IdTipoUsuario
             };
 
