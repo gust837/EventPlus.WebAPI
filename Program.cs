@@ -27,6 +27,12 @@ builder.Services.AddScoped<IComentario, ComentarioRepository>();
 builder.Services.AddScoped<IPresenca, PresencaRepository>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 
+//Registra o HttpClient tipado para o serviço de moderação de texto (Sightengine)
+builder.Services.AddHttpClient<IModeracaoTextoService, ModeracaoTextoService>(client =>
+{
+    client.BaseAddress = new Uri("https://api.sightengine.com/1.0/");
+});
+
 //Autenticaçao JWT configura como a API vai validar os tokens recebidos nas requisiçoes
 builder.Services.AddAuthentication(options =>
 {

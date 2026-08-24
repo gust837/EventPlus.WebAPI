@@ -11,10 +11,12 @@ namespace EventPlus.WebAPI.Controllers
     public class ComentarioController : ControllerBase
     {
         private readonly IComentario _comentario;
+        private readonly IModeracaoTextoService _moderacaoTexto;
 
-        public ComentarioController(IComentario comentario)
+        public ComentarioController(IComentario comentario, IModeracaoTextoService moderacaoTexto)
         {
             _comentario = comentario;
+            _moderacaoTexto = moderacaoTexto;
         }
 
         [HttpGet("{id:guid}")]
@@ -48,12 +50,20 @@ namespace EventPlus.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Cadastrar([FromBody] ComentarioDTO dto)
         {
+            var contemImproprio = await _moderacaoTexto.ContemConteudoImproprio(dto.Descricao);
+
+            if (contemImproprio)
+            {
+                return BadRequest("O comentário contém conteúdo impróprio e não pode ser publicado");
+            }
+
             var comentarioBuscado = new Comentario
             {
                 Descricao = dto.Descricao,
                 DataComentario = dto.DataComentario,
                 IdEvento = dto.IdEvento,
-                IdUsuario = dto.IdUsuario
+                IdUsuario = dto.IdUsuario,
+                
             };
 
             try
