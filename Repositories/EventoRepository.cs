@@ -38,6 +38,8 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task Cadastrar(Evento evento)
         {
+
+
             await _context.Evento.AddAsync(evento);
 
             await _context.SaveChangesAsync();

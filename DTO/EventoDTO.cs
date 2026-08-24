@@ -14,7 +14,9 @@ namespace EventPlus.WebAPI.DTO
         [Required(ErrorMessage = "A data do evento é obrigatória.")]
         public DateTime DataEvento { get; set; }
 
-        public IFormFile? ImagemUrl { get; set; }
+        public string? ImagemUrl { get; set; }
+
+        public IFormFile? ArquivoImagem { get; set; }
 
         public Guid IdTipoEvento { get; set; }
 

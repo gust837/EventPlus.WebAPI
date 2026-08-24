@@ -1,6 +1,8 @@
 using EventPlus.WebAPI.BdContextEvent;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Repositories;
+using EventPlus.WebAPI.Service;
+using EventPlus.WebAPI.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,7 +12,7 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<EventContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConection")));
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 //Corta o ciclo Usuario --> TipoUsuario --> 
 //colocando um null no ponto onde a referencia se repete
@@ -23,6 +25,7 @@ builder.Services.AddScoped<IInstituicao, InstituicaoRepository>();
 builder.Services.AddScoped<IEvento, EventoRepository>();
 builder.Services.AddScoped<IComentario, ComentarioRepository>();
 builder.Services.AddScoped<IPresenca, PresencaRepository>();
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 
 //Autenticaçao JWT configura como a API vai validar os tokens recebidos nas requisiçoes
 builder.Services.AddAuthentication(options =>
@@ -49,9 +52,12 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.FromMinutes(5),
 
         //chave secreta utilizada para validar a assinatura do token
-        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("eventos-chave-autenticacao-webapi-dev"))
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("Jwt:Key"))
     };
 });
+
+//Configuração do Cloudnary
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
 
 //Reistra o serviço de autorização
 builder.Services.AddAuthorization();

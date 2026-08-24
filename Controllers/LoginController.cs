@@ -26,10 +26,12 @@ namespace EventPlus.WebAPI.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IUsuario _usuario;
+        private readonly IConfiguration _configuration;
 
-        public LoginController(IUsuario usuario)
+        public LoginController(IUsuario usuario, IConfiguration configuration)
         {
             _usuario = usuario;
+            _configuration = configuration;
         }
 
         [HttpPost]
@@ -56,7 +58,7 @@ namespace EventPlus.WebAPI.Controllers
             };
 
             //Criar a chave de segurança com base na chave secreta definida
-            var chaveSecreta = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("eventos-chave-autenticacao-webapi-dev"));
+            var chaveSecreta = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
 
             //Definir algoritimo de assinatura(HMACSHA256 é o padrao)
             var credenciais = new SigningCredentials(chaveSecreta, SecurityAlgorithms.HmacSha256);

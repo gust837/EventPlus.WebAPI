@@ -13,20 +13,12 @@ namespace EventPlus.WebAPI.Controllers
     public class EventoController : ControllerBase
     {
         private readonly IEvento _evento;
-        private readonly ICloudinary _cloudinary;
+        private readonly ICloudinaryService _cloudinary;
 
-        public EventoController(IEvento evento, IConfiguration c)
+        public EventoController(IEvento evento, ICloudinaryService cloudinaryService)
         {
             _evento = evento;
-
-            var acc = new Account
-            (
-                c["Cloudinary:CloudName"],
-                c["Cloudinary:ApiKey"],
-                c["Cloudinary:ApiSecret"]
-            );
-
-            _cloudinary = new Cloudinary(acc);
+            _cloudinary = cloudinaryService;
         }
 
         [HttpGet("{id:guid}")]
@@ -58,32 +50,22 @@ namespace EventPlus.WebAPI.Controllers
         }
 
         [HttpPost]
+        [Consumes("multipart/form-data")]
         public async Task<IActionResult> Cadastrar( [FromForm] EventoDTO dto)
         {
             try
             {
-                string imgUrl = null;
+                string? imagemUrl = null;
 
-                if (dto.ImagemUrl != null && dto.ImagemUrl.Length > 0)
-                {
-                    await using var stream = dto.ImagemUrl.OpenReadStream();
-                    var upload = new ImageUploadParams
-                    {
-                        File = new FileDescription(dto.ImagemUrl.FileName, stream),
-                        Folder = "EventPlus/Eventos"
-                    };
-
-                    var uploadResuts = await _cloudinary.UploadAsync(upload);
-
-                    imgUrl = uploadResuts.SecureUrl.ToString();
-                }
+                if (dto.ArquivoImagem is not null )
+                    imagemUrl = await _cloudinary.UploadImagem(dto.ArquivoImagem);
 
                 var eventoBuscado = new Evento
                 {
                     NomeEvento = dto.NomeEvento,
                     Descricao = dto.Descricao,
                     DataEvento = dto.DataEvento,
-                    ImagemUrl = imgUrl,
+                    ImagemUrl = imagemUrl, //url vinda do Cloudinary(ou nulo)
                     IdTipoEvento = dto.IdTipoEvento,
                     IdInstituicao = dto.IdInstituicao
                 };

@@ -4,12 +4,12 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>18e5c006-1501-4035-91bc-340076f9a77c</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="BdContextEvent\" />
-    <Folder Include="Service\" />
   </ItemGroup>
 
   <ItemGroup>
