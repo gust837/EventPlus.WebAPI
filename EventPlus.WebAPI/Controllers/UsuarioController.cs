@@ -2,6 +2,7 @@
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
 using EventPlus.WebAPI.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,7 @@ namespace EventPlus.WebAPI.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuario _usuario;
@@ -58,6 +60,7 @@ namespace EventPlus.WebAPI.Controller
         /// <param name="Usuario">Perfil do usuario a ser cadastrado</param>
         /// <returns></returns>
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Cadastrar([FromBody] UsuarioDTO dto)
         {
             var usuarioBuscado = new Usuario

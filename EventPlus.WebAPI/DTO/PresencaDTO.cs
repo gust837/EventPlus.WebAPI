@@ -9,5 +9,7 @@ namespace EventPlus.WebAPI.DTO
 
         [Required]
         public Guid IdUsuario { get; set; }
+
+        public bool Situacao { get; set; }
     }
 }

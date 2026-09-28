@@ -38,7 +38,7 @@ namespace EventPlus.WebAPI.Controllers
                 var tipos = await _presenca.Listar();
                 return Ok(tipos);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest();
             }
@@ -47,34 +47,43 @@ namespace EventPlus.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Cadastrar([FromBody] PresencaDTO dto)
         {
-            var presenca = new Presenca
+            try
             {
-                IdEvento = dto.IdEvento,
-                IdUsuario = dto.IdUsuario
-            };
+                var presenca = new Presenca
+                {
+                    IdEvento = dto.IdEvento,
+                    IdUsuario = dto.IdUsuario,
+                    Situacao = dto.Situacao
+                };
 
-            await _presenca.Cadastrar(presenca);
-            return StatusCode(201, presenca);
+                await _presenca.Cadastrar(presenca);
+                return StatusCode(201, presenca);
+            }
+
+            catch (Exception ex)
+            {
+                return BadRequest(ex.InnerException.Message);
+            }
         }
 
         [HttpPut]
-        public async Task<IActionResult> Atualizar(Guid id, [FromBody] PresencaDTO dto)
-        {
-            var presenca = new Presenca
+            public async Task<IActionResult> Atualizar(Guid id, [FromBody] PresencaDTO dto)
             {
-                IdEvento = dto.IdEvento,
-                IdUsuario = dto.IdEvento
-            };
+                var presenca = new Presenca
+                {
+                    IdEvento = dto.IdEvento,
+                    IdUsuario = dto.IdEvento
+                };
 
-            await _presenca.Atualizar(id, presenca);
-            return StatusCode(201, presenca);
-        }
+                await _presenca.Atualizar(id, presenca);
+                return StatusCode(201, presenca);
+            }
 
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> Deletar(Guid id)
-        {
-            await _presenca.Deletar(id);
-            return NoContent();
+            [HttpDelete("{id:guid}")]
+            public async Task<IActionResult> Deletar(Guid id)
+            {
+                await _presenca.Deletar(id);
+                return NoContent();
+            }
         }
     }
-}

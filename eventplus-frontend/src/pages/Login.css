@@ -1,0 +1,93 @@
+/* Centraliza o card de login na tela inteira */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 1rem;
+}
+
+/* Card com sombra e cantos arredondados */
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background-color: #ffffff;
+  padding: 2.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.login-titulo {
+  font-size: 1.6rem;
+  color: #333333;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Mensagem de alerta de erro */
+.login-alerta-erro {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1.2rem;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 1px solid #ef9a9a;
+}
+
+/* Estrutura do formulário */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.campo-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: left;
+}
+
+.campo-grupo label {
+  font-size: 0.9rem;
+  color: #555555;
+  font-weight: 500;
+}
+
+.campo-grupo input {
+  padding: 0.75rem;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.campo-grupo input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Botão de envio */
+.btn-entrar {
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 0.5rem;
+}
+
+.btn-entrar:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.btn-entrar:disabled {
+  background-color: #a0c4ff;
+  cursor: not-allowed;
+}

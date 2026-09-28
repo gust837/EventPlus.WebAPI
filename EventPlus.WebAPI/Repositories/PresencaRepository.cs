@@ -22,6 +22,8 @@ namespace EventPlus.WebAPI.Repositories
             {
                 presencaBuscada.Situacao = presenca.Situacao;
             }
+            _context.Presenca.Update(presencaBuscada);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<Presenca?> BuscarPorId(Guid id)

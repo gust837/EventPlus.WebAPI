@@ -3,6 +3,7 @@ using CloudinaryDotNet.Actions;
 using EventPlus.WebAPI.DTO;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace EventPlus.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class EventoController : ControllerBase
     {
         private readonly IEvento _evento;
@@ -22,13 +24,13 @@ namespace EventPlus.WebAPI.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task <IActionResult> BuscarPorId(Guid id)
+        public async Task<IActionResult> BuscarPorId(Guid id)
         {
             var eventoBuscado = await _evento.BuscarPorId(id);
 
             if (eventoBuscado == null)
             {
-                return NotFound("Usuario não encontrado"); 
+                return NotFound("Usuario não encontrado");
             }
 
             return Ok(eventoBuscado);
@@ -51,13 +53,13 @@ namespace EventPlus.WebAPI.Controllers
 
         [HttpPost]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> Cadastrar( [FromForm] EventoDTO dto)
+        public async Task<IActionResult> Cadastrar([FromForm] EventoDTO dto)
         {
             try
             {
                 string? imagemUrl = null;
 
-                if (dto.ArquivoImagem is not null )
+                if (dto.ArquivoImagem is not null)
                     imagemUrl = await _cloudinary.UploadImagem(dto.ArquivoImagem);
 
                 var eventoBuscado = new Evento
@@ -90,7 +92,7 @@ namespace EventPlus.WebAPI.Controllers
                 NomeEvento = dto.NomeEvento,
                 Descricao = dto.Descricao,
                 DataEvento = dto.DataEvento,
-                
+
                 IdTipoEvento = dto.IdTipoEvento,
                 IdInstituicao = dto.IdInstituicao
             };
@@ -107,5 +109,5 @@ namespace EventPlus.WebAPI.Controllers
             await _evento.Deletar(id);
             return NoContent();
         }
-     }
+    }
 }

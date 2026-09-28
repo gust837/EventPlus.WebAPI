@@ -60,7 +60,7 @@ namespace EventPlus.WebAPI.Controllers
             var comentarioBuscado = new Comentario
             {
                 Descricao = dto.Descricao,
-                DataComentario = dto.DataComentario,
+                DataComentario = DateTime.Now,
                 IdEvento = dto.IdEvento,
                 IdUsuario = dto.IdUsuario,
                 
@@ -83,7 +83,6 @@ namespace EventPlus.WebAPI.Controllers
             var comentarioBuscado = new Comentario
             {
                 Descricao = dto.Descricao,
-                DataComentario = dto.DataComentario,
                 IdEvento = dto.IdEvento,
                 IdUsuario = dto.IdUsuario
             };
