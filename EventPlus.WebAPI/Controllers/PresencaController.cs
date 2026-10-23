@@ -1,6 +1,7 @@
-﻿using EventPlus.WebAPI.DTO;
+using EventPlus.WebAPI.DTO;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +9,7 @@ namespace EventPlus.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PresencaController : ControllerBase
     {
         private readonly IPresenca _presenca;
@@ -31,6 +33,7 @@ namespace EventPlus.WebAPI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Listar()
         {
             try
@@ -62,7 +65,7 @@ namespace EventPlus.WebAPI.Controllers
 
             catch (Exception ex)
             {
-                return BadRequest(ex.InnerException.Message);
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
             }
         }
 
@@ -72,7 +75,7 @@ namespace EventPlus.WebAPI.Controllers
                 var presenca = new Presenca
                 {
                     IdEvento = dto.IdEvento,
-                    IdUsuario = dto.IdEvento
+                    IdUsuario = dto.IdUsuario
                 };
 
                 await _presenca.Atualizar(id, presenca);

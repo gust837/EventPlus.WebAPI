@@ -1,4 +1,4 @@
-﻿using CloudinaryDotNet;
+using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using EventPlus.WebAPI.DTO;
 using EventPlus.WebAPI.Interfaces;
@@ -24,6 +24,7 @@ namespace EventPlus.WebAPI.Controllers
         }
 
         [HttpGet("{id:guid}")]
+        [AllowAnonymous]
         public async Task<IActionResult> BuscarPorId(Guid id)
         {
             var eventoBuscado = await _evento.BuscarPorId(id);
@@ -37,6 +38,7 @@ namespace EventPlus.WebAPI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Listar()
         {
             try
@@ -80,7 +82,7 @@ namespace EventPlus.WebAPI.Controllers
 
             catch (Exception ex)
             {
-                return BadRequest(ex.InnerException.Message);
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
             }
         }
 

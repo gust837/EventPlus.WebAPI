@@ -24,11 +24,12 @@ namespace EventPlus.WebAPI.Repositories
                 comentarioBuscado.DataComentario = comentario.DataComentario;
                 comentarioBuscado.IdUsuario = comentario.IdUsuario;
             }
+            await _context.SaveChangesAsync();
         }
 
         public async Task<Comentario?> BuscarPorId(Guid id)
         {
-            return await _context.Comentario.FirstOrDefaultAsync();
+            return await _context.Comentario.FirstOrDefaultAsync(e => e.IdComentario == id);
         }
 
         public async Task Cadastrar(Comentario comentario)
@@ -50,7 +51,7 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task<List<Comentario>> Listar()
         {
-            return await _context.Comentario.AsNoTracking().ToListAsync();
+            return await _context.Comentario.Include(e => e.IdUsuarioNavigation).AsNoTracking().ToListAsync();
         }
 
         public async Task<List<Comentario>> ListarPorEvento(Guid idEvento)

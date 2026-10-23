@@ -1,111 +1,243 @@
-/* Container principal da página */
+/* Página inteira */
+.eventos-pagina {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 64px);
+  background-color: var(--color-white);
+}
+
 .eventos-container {
-  max-width: 1000px;
+  max-width: 1100px;
+  width: 100%;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2.5rem 1.5rem;
+  flex: 1;
 }
 
 /* Cabeçalho */
-/* Atualize o cabeçalho para colocar o título de um lado e o botão do outro */
 .eventos-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
 }
-/* Adicione o estilo que transforma o Link em um botão azul destacado */
+
+.eventos-titulo-secao {
+  font-family: var(--font-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--color-text-dark);
+  text-decoration: underline;
+  text-decoration-color: var(--color-crimson);
+  text-underline-offset: 6px;
+}
+
+/* Botão Novo Evento */
 .btn-novo-evento {
   display: inline-flex;
   align-items: center;
-  background-color: #007bff;
-  color: #ffffff;
-  padding: 0.6rem 1.2rem;
-  border-radius: 6px;
-  text-decoration: none; /* remove o sublinhado */
+  background-color: var(--color-crimson);
+  color: var(--color-white);
+  padding: 0.5rem 1.2rem;
+  border-radius: 4px;
+  text-decoration: none;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   transition: background-color 0.2s, transform 0.1s;
 }
+
 .btn-novo-evento:hover {
-  background-color: #0056b3;
+  background-color: var(--color-crimson-dark);
   transform: translateY(-1px);
 }
-.eventos-header h1 {
-  font-size: 1.8rem;
-  color: #333;
+
+/* Barra de Filtros em Pílulas (Figma) */
+.eventos-filtros {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
 }
 
-/* Área de feedback (carregando / erro) */
+.filtro-pill {
+  padding: 0.35rem 1.2rem;
+  border-radius: 20px;
+  border: none;
+  background-color: transparent;
+  color: var(--color-text-gray);
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filtro-pill:hover {
+  color: var(--color-crimson);
+}
+
+/* Pílula ativa: fundo vermelho vinho com texto branco */
+.filtro-pill.ativo {
+  background-color: var(--color-crimson);
+  color: var(--color-white);
+  font-weight: 600;
+}
+
+/* Grid de Cards 3x3 */
+.eventos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+/* Card individual */
+.evento-card {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--color-white);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.evento-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border-color: var(--color-crimson);
+}
+
+/* Imagem e Badge de Categoria */
+.card-imagem-wrapper {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  background-color: var(--color-off-white);
+  overflow: hidden;
+}
+
+.card-imagem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-sem-imagem {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+  background: #f0f0f0;
+}
+
+/* Tagzinha azul-claro de categoria do Figma */
+.card-categoria-tag {
+  position: absolute;
+  bottom: 0.6rem;
+  left: 0.6rem;
+  background-color: #E8F0FE;
+  color: #1967D2;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+}
+
+/* Corpo do Card */
+.card-corpo {
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-titulo {
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin-bottom: 0.4rem;
+}
+
+.card-descricao {
+  font-size: 0.85rem;
+  color: var(--color-text-gray);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 1.2rem;
+  flex: 1;
+}
+
+/* Ações no rodapé do Card */
+.card-rodape-acoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.link-ver-evento {
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-crimson);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.link-ver-evento:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.btn-deletar-card {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.btn-deletar-card:hover {
+  opacity: 1;
+}
+
+/* Feedback e Rodapé Institucional */
 .eventos-feedback-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 200px;
+  gap: 1rem;
 }
 
-.mensagem-carregando {
-  font-size: 1.1rem;
-  color: #666;
-}
+.mensagem-carregando { color: var(--color-text-gray); font-size: 1rem; }
+.mensagem-erro { color: var(--color-crimson); font-size: 1rem; }
+.mensagem-vazio { color: var(--color-text-light); text-align: center; padding: 2rem; font-style: italic; }
 
-.mensagem-erro {
-  font-size: 1.1rem;
-  color: #d32f2f;
-  margin-bottom: 1rem;
-}
-
-.mensagem-vazio {
-  color: #777;
-  font-style: italic;
-}
-
-/* Botão de tentar novamente */
 .btn-tentar-novamente {
-  background-color: #007bff;
-  color: #fff;
+  background-color: var(--color-crimson);
+  color: var(--color-white);
   border: none;
-  padding: 0.6rem 1.2rem;
+  padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.95rem;
-  transition: background-color 0.2s;
 }
 
-.btn-tentar-novamente:hover {
-  background-color: #0056b3;
-}
-
-/* Tabela de listagem */
-.tabela-container {
-  overflow-x: auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
-}
-
-.tabela-eventos {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #fff;
-  text-align: left;
-}
-
-.tabela-eventos th,
-.tabela-eventos td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.tabela-eventos th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-  color: #495057;
-}
-
-.tabela-eventos tr:last-child td {
-  border-bottom: none;
-}
-
-.tabela-eventos tbody tr:hover {
-  background-color: #f1f3f5;
+.eventos-rodape-institucional {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--color-border);
 }

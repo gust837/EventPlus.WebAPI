@@ -1,70 +1,80 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {authService} from '../services/authService';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { authService } from '../services/authService';
 import './Login.css';
 
+
 export function Login() {
-    const [email, setEmail] = useState('');
-    const [senha, setSenha] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [carregando, setCarregando] = useState(false);
+  const [erro, setErro] = useState(null);
 
-    const [carregando, setCarregando] = useState(false);
-    const [erro, setErro] = useState(null);
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
-
-    async function handleSubmit(e) {
-        e.preventDefault();
-
-        try {
-            setCarregando(true);
-            setErro(null);
-            
-            await authService.login(email, senha);
-
-            navigate('/eventos');
-        } 
-        catch (err) {
-            console.error(err);
-            setErro('Email ou senha incorretos. Tente novamente.');
-        }
-        finally{
-            setCarregando(false);
-        }
+  async function handleSubmit(e) {
+    e.preventDefault();
+    try {
+      setCarregando(true);
+      setErro(null);
+      await authService.login(email, senha);
+      navigate('/home');
+    } catch (err) {
+      console.error(err);
+      setErro('E-mail ou senha incorretos. Tente novamente.');
+    } finally {
+      setCarregando(false);
     }
+  }
 
-    return(
-        <div className="login-container">
-            <div className="login-card">
-                <h1 className="login-titulo">Entrar no EventPlus</h1>
-                {erro && <div className="login-alerta-erro">{erro}</div>}
-
-                <form onSubmit={handleSubmit} className="login-form">
-                    <div className="campo-grupo">
-                        <label htmlFor="email">E-mail</label>
-                        <input 
-                        id="email"
-                        type="email"
-                        placeholder="seuemail@dominio.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        />
-                    </div>
-
-                    <div className="campo-grupo">
-                        <label htmlFor="senha">Senha</label>
-                        <input 
-                        id="senha"
-                        type="password"
-                        placeholder="Digite sua senha"
-                        value={senha}
-                        onChange={(e) => setSenha(e.target.value)}
-                        required
-                        />
-                    </div>
-                    <button type="submit" className="btn-entrar" disabled={carregando}>{carregando ? 'Entrando' : 'Entrar'}</button>
-                </form>
-            </div>
+  return (
+    <div className="login-tela">
+      <div className="login-container">
+        
+        {/* Logo estilizado conforme o Figma */}
+        <div className="login-logo">
+          <span className="logo-linhas">≡</span>VENT+
         </div>
-    );
+        {/* Mensagem de erro caso o login falhe */}
+        {erro && <p className="login-alerta">{erro}</p>}
+        <form onSubmit={handleSubmit} className="login-formulario">
+          
+          {/* Input de Login / Email com linha inferior */}
+          <div className="login-campo">
+            <input
+              type="email"
+              placeholder="Login"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="login-input-linha"
+            />
+          </div>
+          {/* Input de Senha com linha inferior */}
+          <div className="login-campo">
+            <input
+              type="password"
+              placeholder="Senha"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              required
+              className="login-input-linha"
+            />
+          </div>
+          {/* Texto "Esqueceu a senha?" */}
+          <a href="#esqueceu" className="login-esqueceu-senha">
+            Esqueceu a senha?
+          </a>
+          {/* Botão de Entrar */}
+          <button 
+            type="submit" 
+            className="login-btn-entrar" 
+            disabled={carregando}
+          >
+            {carregando ? 'Entrando...' : 'Entrar'}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }

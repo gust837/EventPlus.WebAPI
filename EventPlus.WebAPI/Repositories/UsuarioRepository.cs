@@ -23,7 +23,7 @@ namespace EventPlus.WebAPI.Repositories
             {
                 usuarioBuscado.Nome = usuario.Nome;
                 usuarioBuscado.Email = usuario.Email;
-                usuarioBuscado.Senha = usuario.Senha;
+                usuarioBuscado.Senha = CriptografarUsuario.CriptografarSenha(usuario.Senha);
                 _context.Usuario.Update(usuarioBuscado);
                 await _context.SaveChangesAsync();
             }
@@ -51,7 +51,7 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task<Usuario?> BuscarPorId(Guid id)
         {
-            return await _context.Usuario.FirstOrDefaultAsync(t => t.IdUsuario == id);
+            return await _context.Usuario.Include(e => e.IdTipoUsuarioNavigation).FirstOrDefaultAsync(t => t.IdUsuario == id);
         }
 
         public async Task Cadastrar(Usuario usuario)

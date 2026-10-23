@@ -93,9 +93,6 @@ builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection(
 //Reistra o serviço de autorização
 builder.Services.AddAuthorization();
 
-//Registra o serviço de controller, mapeia automaticamente o serviço da pasta/Controllers
-builder.Services.AddControllers();
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

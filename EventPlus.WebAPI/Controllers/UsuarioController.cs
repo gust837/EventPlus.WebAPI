@@ -1,4 +1,4 @@
-﻿using EventPlus.WebAPI.DTO;
+using EventPlus.WebAPI.DTO;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
 using EventPlus.WebAPI.Utils;
@@ -78,7 +78,7 @@ namespace EventPlus.WebAPI.Controller
             }
             catch(Exception ex)
             {
-                return BadRequest(ex.InnerException.Message);
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
             }
 
         }

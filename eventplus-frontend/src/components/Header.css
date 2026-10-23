@@ -1,0 +1,70 @@
+.header {
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-logo {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-crimson);
+  text-decoration: none;
+  letter-spacing: 3px;
+  display: flex;
+  align-items: center;
+}
+
+.logo-e {
+  font-size: 1.5rem;
+  margin-right: 1px;
+}
+
+.header-nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-link {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--color-text-dark);
+  text-decoration: none;
+  padding-bottom: 3px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--color-crimson);
+  border-bottom-color: var(--color-crimson);
+}
+
+.header-user-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-dark);
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.header-user-btn:hover {
+  color: var(--color-crimson);
+}

@@ -1,11 +1,13 @@
-﻿using EventPlus.WebAPI.DTO;
+using EventPlus.WebAPI.DTO;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventPlus.WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ComentarioController : ControllerBase
@@ -33,6 +35,7 @@ namespace EventPlus.WebAPI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Listar()
         {
             try
@@ -73,7 +76,7 @@ namespace EventPlus.WebAPI.Controllers
             }
             catch(Exception ex)
             {
-                return BadRequest(ex.InnerException.Message);
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
             }
         }
 

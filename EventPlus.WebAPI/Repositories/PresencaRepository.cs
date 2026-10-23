@@ -21,8 +21,8 @@ namespace EventPlus.WebAPI.Repositories
             if (presencaBuscada != null)
             {
                 presencaBuscada.Situacao = presenca.Situacao;
+                _context.Presenca.Update(presencaBuscada);
             }
-            _context.Presenca.Update(presencaBuscada);
             await _context.SaveChangesAsync();
         }
 
