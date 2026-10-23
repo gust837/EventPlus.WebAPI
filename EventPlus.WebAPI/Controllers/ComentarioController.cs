@@ -1,6 +1,7 @@
 using EventPlus.WebAPI.DTO;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
+using EventPlus.WebAPI.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -50,9 +51,34 @@ namespace EventPlus.WebAPI.Controllers
             }
         }
 
+        // Lista apenas os comentários de um evento (com o nome do autor), do mais recente para o mais antigo.
+        [HttpGet("evento/{idEvento:guid}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ListarPorEvento(Guid idEvento)
+        {
+            try
+            {
+                var comentarios = await _comentario.ListarPorEvento(idEvento);
+                return Ok(comentarios);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Cadastrar([FromBody] ComentarioDTO dto)
         {
+            // O autor do comentário vem do token JWT (e não do corpo da requisição)
+            // para impedir que alguém publique em nome de outro usuário.
+            var idUsuarioLogado = User.ObterIdUsuario();
+
+            if (idUsuarioLogado == null)
+            {
+                return Unauthorized("Usuário não identificado no token.");
+            }
+
             var contemImproprio = await _moderacaoTexto.ContemConteudoImproprio(dto.Descricao);
 
             if (contemImproprio)
@@ -65,8 +91,9 @@ namespace EventPlus.WebAPI.Controllers
                 Descricao = dto.Descricao,
                 DataComentario = DateTime.Now,
                 IdEvento = dto.IdEvento,
-                IdUsuario = dto.IdUsuario,
-                
+                IdUsuario = idUsuarioLogado,
+                // Só chega aqui o que passou pela moderação, então o comentário pode ser exibido.
+                Exibe = true
             };
 
             try

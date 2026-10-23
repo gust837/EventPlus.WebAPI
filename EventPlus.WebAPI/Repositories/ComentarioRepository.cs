@@ -1,4 +1,4 @@
-﻿using EventPlus.WebAPI.BdContextEvent;
+using EventPlus.WebAPI.BdContextEvent;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -56,7 +56,12 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task<List<Comentario>> ListarPorEvento(Guid idEvento)
         {
-            return await _context.Comentario.Where(e => e.IdEvento == idEvento).AsNoTracking().ToListAsync();
+            return await _context.Comentario
+                .Where(e => e.IdEvento == idEvento)
+                .Include(e => e.IdUsuarioNavigation)
+                .OrderByDescending(e => e.DataComentario)
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }

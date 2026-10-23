@@ -1,4 +1,4 @@
-﻿using EventPlus.WebAPI.Models;
+using EventPlus.WebAPI.Models;
 
 namespace EventPlus.WebAPI.Interfaces
 {
@@ -7,6 +7,8 @@ namespace EventPlus.WebAPI.Interfaces
         Task<List<Presenca>> Listar();
 
         Task<List<Presenca>> ListarPresenca(Guid idPresenca);
+
+        Task<List<Presenca>> ListarPorUsuario(Guid idUsuario);
 
         Task<Presenca?> BuscarPorId(Guid id);
 

@@ -1,4 +1,4 @@
-﻿using EventPlus.WebAPI.BdContextEvent;
+using EventPlus.WebAPI.BdContextEvent;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -57,6 +57,11 @@ namespace EventPlus.WebAPI.Repositories
         public async Task<List<Presenca>> ListarPresenca(Guid idPresenca)
         {
             return await _context.Presenca.Where(p => p.IdPresenca == idPresenca).AsNoTracking().ToListAsync();
+        }
+
+        public async Task<List<Presenca>> ListarPorUsuario(Guid idUsuario)
+        {
+            return await _context.Presenca.Where(p => p.IdUsuario == idUsuario).AsNoTracking().ToListAsync();
         }
     }
 }
