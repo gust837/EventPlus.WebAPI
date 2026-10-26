@@ -31,7 +31,7 @@ namespace EventPlus.WebAPI.Controllers
 
             if (eventoBuscado == null)
             {
-                return NotFound("Usuario não encontrado");
+                return NotFound("Evento não encontrado");
             }
 
             return Ok(eventoBuscado);
@@ -49,7 +49,7 @@ namespace EventPlus.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
             }
         }
 
@@ -69,17 +69,14 @@ namespace EventPlus.WebAPI.Controllers
                     NomeEvento = dto.NomeEvento,
                     Descricao = dto.Descricao,
                     DataEvento = dto.DataEvento,
-                    ImagemUrl = imagemUrl, //url vinda do Cloudinary(ou nulo)
+                    ImagemUrl = imagemUrl,
                     IdTipoEvento = dto.IdTipoEvento,
                     IdInstituicao = dto.IdInstituicao
                 };
 
-
-
                 await _evento.Cadastrar(eventoBuscado);
                 return StatusCode(201, eventoBuscado);
             }
-
             catch (Exception ex)
             {
                 return BadRequest(ex.InnerException?.Message ?? ex.Message);
@@ -87,29 +84,48 @@ namespace EventPlus.WebAPI.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Atualizar(Guid id, [FromBody] EventoDTO dto)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Atualizar(Guid id, [FromForm] EventoDTO dto)
         {
-            var eventoBuscado = new Evento
+            try
             {
-                NomeEvento = dto.NomeEvento,
-                Descricao = dto.Descricao,
-                DataEvento = dto.DataEvento,
+                string? imagemUrl = null;
 
-                IdTipoEvento = dto.IdTipoEvento,
-                IdInstituicao = dto.IdInstituicao
-            };
+                if (dto.ArquivoImagem is not null)
+                    imagemUrl = await _cloudinary.UploadImagem(dto.ArquivoImagem);
 
-            await _evento.Atualizar(id, eventoBuscado);
+                var eventoBuscado = new Evento
+                {
+                    NomeEvento = dto.NomeEvento,
+                    Descricao = dto.Descricao,
+                    DataEvento = dto.DataEvento,
+                    ImagemUrl = imagemUrl,
+                    IdTipoEvento = dto.IdTipoEvento,
+                    IdInstituicao = dto.IdInstituicao
+                };
 
-            return Ok(eventoBuscado);
+                await _evento.Atualizar(id, eventoBuscado);
+
+                return Ok(eventoBuscado);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+            }
         }
-
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Deletar(Guid id)
         {
-            await _evento.Deletar(id);
-            return NoContent();
+            try
+            {
+                await _evento.Deletar(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+            }
         }
     }
 }

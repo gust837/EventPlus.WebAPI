@@ -1,7 +1,8 @@
-﻿using EventPlus.WebAPI.BdContextEvent;
+using EventPlus.WebAPI.BdContextEvent;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
 using Microsoft.EntityFrameworkCore;
+
 namespace EventPlus.WebAPI.Repositories
 {
     public class TipoEventoRepository : ITipoEvento
@@ -33,16 +34,22 @@ namespace EventPlus.WebAPI.Repositories
         public async Task Cadastrar(TipoEvento tipoEvento)
         {
             await _context.TipoEvento.AddAsync(tipoEvento);
-
             await _context.SaveChangesAsync();
         }
 
         public async Task Deletar(Guid id)
         {
-            var tipoEventoBuscado = await _context.TipoEvento.FindAsync(id);
+            var tipoEventoBuscado = await _context.TipoEvento
+                .Include(t => t.Evento)
+                .FirstOrDefaultAsync(t => t.IdTipoEvento == id);
 
             if (tipoEventoBuscado != null)
             {
+                foreach (var evento in tipoEventoBuscado.Evento)
+                {
+                    evento.IdTipoEvento = null;
+                }
+
                 _context.TipoEvento.Remove(tipoEventoBuscado);
                 await _context.SaveChangesAsync();
             }

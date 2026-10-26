@@ -1,4 +1,4 @@
-﻿using EventPlus.WebAPI.BdContextEvent;
+using EventPlus.WebAPI.BdContextEvent;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +24,6 @@ namespace EventPlus.WebAPI.Repositories
                 _context.TipoUsuario.Update(tipoUsuarioBuscado);
                 await _context.SaveChangesAsync();
             }
-
         }
 
         public async Task<TipoUsuario?> BuscarPorId(Guid id)
@@ -35,16 +34,22 @@ namespace EventPlus.WebAPI.Repositories
         public async Task Cadastrar(TipoUsuario tipoUsuario)
         {
             await _context.TipoUsuario.AddAsync(tipoUsuario);
-
             await _context.SaveChangesAsync();
         }
 
         public async Task Deletar(Guid id)
         {
-            var tipoUsuarioBuscado = await _context.TipoUsuario.FindAsync(id);
+            var tipoUsuarioBuscado = await _context.TipoUsuario
+                .Include(t => t.Usuario)
+                .FirstOrDefaultAsync(t => t.IdTipoUsuario == id);
 
             if (tipoUsuarioBuscado != null)
             {
+                foreach (var usuario in tipoUsuarioBuscado.Usuario)
+                {
+                    usuario.IdTipoUsuario = null;
+                }
+
                 _context.TipoUsuario.Remove(tipoUsuarioBuscado);
                 await _context.SaveChangesAsync();
             }

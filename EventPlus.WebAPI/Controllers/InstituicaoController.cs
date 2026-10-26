@@ -1,11 +1,13 @@
-﻿using EventPlus.WebAPI.DTO;
+using EventPlus.WebAPI.DTO;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventPlus.WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class InstituicaoController : ControllerBase
@@ -18,6 +20,7 @@ namespace EventPlus.WebAPI.Controllers
         }
 
         [HttpGet("{id:guid}")]
+        [AllowAnonymous]
         public async Task<IActionResult> BuscarPorId(Guid id)
         {
             var instituicaoBuscada = await _instituicao.BuscarPorId(id);
@@ -30,78 +33,87 @@ namespace EventPlus.WebAPI.Controllers
             return Ok(instituicaoBuscada);
         }
 
-
         /// <summary>
         /// Lista todas as instituições
         /// </summary>
-        /// <returns></returns>
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Listar()
         {
             try
             {
-                var tipos = await _instituicao.Listar();
-
-                return Ok(tipos);
+                var instituicoes = await _instituicao.Listar();
+                return Ok(instituicoes);
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
             }
         }
 
         /// <summary>
-        /// Cadastra uma nova instituição 
+        /// Cadastra uma nova instituição
         /// </summary>
-        /// <param name="tipoEvento">Perfil da instituição</param>
-        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Cadastrar([FromBody] InstituicaoDTO dto)
         {
-            var instituicao = new Instituicao
+            try
             {
-                NomeFantasia = dto.NomeFantasia,
-                Cnpj = dto.CNPJ,
-                Endereco = dto.Endereco
-            };
+                var instituicao = new Instituicao
+                {
+                    NomeFantasia = dto.NomeFantasia,
+                    Cnpj = dto.CNPJ,
+                    Endereco = dto.Endereco
+                };
 
-            await _instituicao.Cadastrar(instituicao);
-
-            return StatusCode(201, instituicao);
+                await _instituicao.Cadastrar(instituicao);
+                return StatusCode(201, instituicao);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+            }
         }
 
         /// <summary>
-        /// Esse metodo atualiza o nome fantasia de instituicao com base no id
+        /// Atualiza uma instituição com base no ID
         /// </summary>
-        /// <param name="id">Id que sera atualizado</param>
-        /// <param name="dto">Titulo que sera atualizado</param>
-        /// <returns></returns>
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Atualizar(Guid id, [FromBody] InstituicaoDTO dto)
         {
-            var instituicaoBuscada = new Instituicao
+            try
             {
-                NomeFantasia = dto.NomeFantasia,
-                Cnpj = dto.CNPJ,
-                Endereco = dto.Endereco
-            };
+                var instituicaoBuscada = new Instituicao
+                {
+                    NomeFantasia = dto.NomeFantasia,
+                    Cnpj = dto.CNPJ,
+                    Endereco = dto.Endereco
+                };
 
-            await _instituicao.Atualizar(id, instituicaoBuscada);
-
-            return Ok(instituicaoBuscada);
+                await _instituicao.Atualizar(id, instituicaoBuscada);
+                return Ok(instituicaoBuscada);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+            }
         }
 
         /// <summary>
         /// Remove uma instituição pelo ID
         /// </summary>
-        /// <param name="id">Id da instituição a ser removido</param>
-        /// 
-        /// <returns></returns>
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Deletar(Guid id)
         {
-            await _instituicao.Deletar(id);
-            return NoContent();
+            try
+            {
+                await _instituicao.Deletar(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+            }
         }
     }
 }

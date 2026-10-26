@@ -1,4 +1,4 @@
-﻿using EventPlus.WebAPI.BdContextEvent;
+using EventPlus.WebAPI.BdContextEvent;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +23,13 @@ namespace EventPlus.WebAPI.Repositories
                 eventoBuscado.NomeEvento = evento.NomeEvento;
                 eventoBuscado.DataEvento = evento.DataEvento;
                 eventoBuscado.Descricao = evento.Descricao;
-                eventoBuscado.ImagemUrl = evento.ImagemUrl;
+
+                // Só substitui a imagem se uma nova imagem tiver sido enviada
+                if (!string.IsNullOrWhiteSpace(evento.ImagemUrl))
+                {
+                    eventoBuscado.ImagemUrl = evento.ImagemUrl;
+                }
+
                 eventoBuscado.IdTipoEvento = evento.IdTipoEvento;
                 eventoBuscado.IdInstituicao = evento.IdInstituicao;
                 _context.Evento.Update(eventoBuscado);
@@ -34,30 +40,28 @@ namespace EventPlus.WebAPI.Repositories
         public async Task<Evento?> BuscarPorId(Guid id)
         {
             return await _context.Evento
-        .Include(e => e.IdInstituicaoNavigation)
-        .Include(e => e.IdTipoEventoNavigation)
-        .FirstOrDefaultAsync(e => e.IdEvento == id);
+                .Include(e => e.IdInstituicaoNavigation)
+                .Include(e => e.IdTipoEventoNavigation)
+                .FirstOrDefaultAsync(e => e.IdEvento == id);
         }
 
         public async Task Cadastrar(Evento evento)
         {
-
-
             await _context.Evento.AddAsync(evento);
-
             await _context.SaveChangesAsync();
         }
 
         public async Task Deletar(Guid id)
         {
-            var eventoBuscado = await _context.Evento.Include(e => e.Comentario).Include(e => e.Presenca).FirstOrDefaultAsync(e => e.IdEvento == id);
+            var eventoBuscado = await _context.Evento
+                .Include(e => e.Comentario)
+                .Include(e => e.Presenca)
+                .FirstOrDefaultAsync(e => e.IdEvento == id);
 
             if (eventoBuscado != null)
             {
                 _context.Comentario.RemoveRange(eventoBuscado.Comentario);
-
                 _context.Presenca.RemoveRange(eventoBuscado.Presenca);
-
                 _context.Evento.Remove(eventoBuscado);
                 await _context.SaveChangesAsync();
             }
@@ -65,7 +69,11 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task<List<Evento>> Listar()
         {
-            return await _context.Evento.Include(e => e.IdInstituicaoNavigation).Include(e => e.IdTipoEventoNavigation).AsNoTracking().ToListAsync();
+            return await _context.Evento
+                .Include(e => e.IdInstituicaoNavigation)
+                .Include(e => e.IdTipoEventoNavigation)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<List<Evento>> ListarPorInscrito(Guid id)
@@ -80,7 +88,13 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task<List<Evento>> ListarProximoEvento()
         {
-            return await _context.Evento.Where(e => e.DataEvento >= DateTime.Now).OrderBy(e => e.DataEvento).Include(e => e.IdInstituicaoNavigation).Include(e => e.IdTipoEventoNavigation).AsNoTracking().ToListAsync();
+            return await _context.Evento
+                .Where(e => e.DataEvento >= DateTime.Now)
+                .OrderBy(e => e.DataEvento)
+                .Include(e => e.IdInstituicaoNavigation)
+                .Include(e => e.IdTipoEventoNavigation)
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }

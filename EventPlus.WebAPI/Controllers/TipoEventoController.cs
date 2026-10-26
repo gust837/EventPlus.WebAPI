@@ -1,11 +1,13 @@
-﻿using EventPlus.WebAPI.DTO;
+using EventPlus.WebAPI.DTO;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventPlus.WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TipoEventoController : ControllerBase
@@ -18,86 +20,96 @@ namespace EventPlus.WebAPI.Controllers
         }
 
         [HttpGet("{id:guid}")]
+        [AllowAnonymous]
         public async Task<IActionResult> BuscarPorId(Guid id)
         {
             var tipoEventoBuscado = await _tipoEvento.BuscarPorId(id);
 
             if (tipoEventoBuscado == null)
             {
-                return NotFound("Tipo evento não encontrado!");
+                return NotFound("Tipo de evento não encontrado!");
             }
 
             return Ok(tipoEventoBuscado);
         }
 
-
         /// <summary>
         /// Lista todos os tipos de evento
         /// </summary>
-        /// <returns></returns>
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Listar()
         {
             try
             {
                 var tipos = await _tipoEvento.Listar();
-
                 return Ok(tipos);
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
             }
         }
 
         /// <summary>
-        /// Cadastra um novo perfil de TipoEvento
+        /// Cadastra um novo TipoEvento
         /// </summary>
-        /// <param name="tipoEvento">Perfil do tipo de evento a ser cadastrado</param>
-        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Cadastrar([FromBody] TipoEventoDTO dto)
         {
-            var tipoEvento = new TipoEvento
+            try
             {
-                Titulo = dto.Titulo
-            };
+                var tipoEvento = new TipoEvento
+                {
+                    Titulo = dto.Titulo
+                };
 
-            await _tipoEvento.Cadastrar(tipoEvento);
-
-            return StatusCode(201, tipoEvento);
+                await _tipoEvento.Cadastrar(tipoEvento);
+                return StatusCode(201, tipoEvento);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+            }
         }
 
         /// <summary>
-        /// Esse metodo atualiza o titulo de tipo evento com base no id
+        /// Atualiza o título de TipoEvento com base no ID
         /// </summary>
-        /// <param name="id">Id que sera atualizado</param>
-        /// <param name="dto">Titulo que sera atualizado</param>
-        /// <returns></returns>
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Atualizar(Guid id, [FromBody] TipoEventoDTO dto)
         {
-            var tipoEvento = new TipoEvento
+            try
             {
-                Titulo = dto.Titulo
-            };
+                var tipoEvento = new TipoEvento
+                {
+                    Titulo = dto.Titulo
+                };
 
-            await _tipoEvento.Atualizar(id, tipoEvento);
-
-            return Ok(tipoEvento);
+                await _tipoEvento.Atualizar(id, tipoEvento);
+                return Ok(tipoEvento);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+            }
         }
 
         /// <summary>
-        /// Remove um perfil de tipo evento pelo ID
+        /// Remove um TipoEvento pelo ID
         /// </summary>
-        /// <param name="id">Id do perfil a ser removido</param>
-        /// 
-        /// <returns></returns>
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Deletar(Guid id)
         {
-            await _tipoEvento.Deletar(id);
-            return NoContent();
+            try
+            {
+                await _tipoEvento.Deletar(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+            }
         }
     }
 }

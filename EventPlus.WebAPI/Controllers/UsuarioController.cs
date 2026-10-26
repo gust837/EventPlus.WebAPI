@@ -28,41 +28,41 @@ namespace EventPlus.WebAPI.Controller
 
             if (UsuarioBuscado == null)
             {
-                return NotFound("Tipo usuario não encontrado!");
+                return NotFound("Usuário não encontrado!");
             }
 
             return Ok(UsuarioBuscado);
         }
 
-
         /// <summary>
-        /// Lista todos os perfils de usuarios
+        /// Lista todos os perfis de usuários
         /// </summary>
-        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Listar()
         {
             try
             {
-                var tipos = await _usuario.Listar();
-
-                return Ok(tipos);
+                var usuarios = await _usuario.Listar();
+                return Ok(usuarios);
             }
-            catch
+            catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
             }
         }
 
         /// <summary>
-        /// Cadastra um novo perfil de usuario
+        /// Cadastra um novo perfil de usuário
         /// </summary>
-        /// <param name="Usuario">Perfil do usuario a ser cadastrado</param>
-        /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Cadastrar([FromBody] UsuarioDTO dto)
         {
+            if (string.IsNullOrWhiteSpace(dto.Senha) || dto.Senha.Length < 8)
+            {
+                return BadRequest("A senha é obrigatória e deve ter pelo menos 8 caracteres.");
+            }
+
             var usuarioBuscado = new Usuario
             {
                 Nome = dto.Nome,
@@ -76,45 +76,57 @@ namespace EventPlus.WebAPI.Controller
                 await _usuario.Cadastrar(usuarioBuscado);
                 return StatusCode(201, usuarioBuscado);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.InnerException?.Message ?? ex.Message);
             }
-
         }
 
         /// <summary>
-        /// Esse metodo atualiza o nome, email e senha do usuario com base no id
+        /// Atualiza nome, email, tipo e (opcionalmente) a senha do usuário com base no ID
         /// </summary>
-        /// <param name="id">Id que sera atualizado</param>
-        /// <param name="dto">Titulo que sera atualizado</param>
-        /// <returns></returns>
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Atualizar(Guid id, [FromBody] UsuarioDTO dto)
         {
+            if (!string.IsNullOrWhiteSpace(dto.Senha) && dto.Senha.Length < 8)
+            {
+                return BadRequest("A nova senha deve ter pelo menos 8 caracteres.");
+            }
+
             var usuarioBuscado = new Usuario
             {
                 Nome = dto.Nome,
                 Email = dto.Email,
-                Senha = dto.Senha
+                Senha = dto.Senha ?? string.Empty,
+                IdTipoUsuario = dto.IdTipoUsuario
             };
 
-            await _usuario.Atualizar(id, usuarioBuscado);
-
-            return Ok(usuarioBuscado);
+            try
+            {
+                await _usuario.Atualizar(id, usuarioBuscado);
+                return Ok(usuarioBuscado);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+            }
         }
 
         /// <summary>
-        /// Remove um perfil de usuario pelo ID
+        /// Remove um perfil de usuário pelo ID
         /// </summary>
-        /// <param name="id">Id do perfil a ser removido</param>
-        /// 
-        /// <returns></returns>
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Deletar(Guid id)
         {
-            await _usuario.Deletar(id);
-            return NoContent();
+            try
+            {
+                await _usuario.Deletar(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using EventPlus.WebAPI.BdContextEvent;
+using EventPlus.WebAPI.BdContextEvent;
 using EventPlus.WebAPI.Interfaces;
 using EventPlus.WebAPI.Models;
 using EventPlus.WebAPI.Utils;
@@ -23,11 +23,17 @@ namespace EventPlus.WebAPI.Repositories
             {
                 usuarioBuscado.Nome = usuario.Nome;
                 usuarioBuscado.Email = usuario.Email;
-                usuarioBuscado.Senha = CriptografarUsuario.CriptografarSenha(usuario.Senha);
+                usuarioBuscado.IdTipoUsuario = usuario.IdTipoUsuario;
+
+                // Só altera a senha se uma nova senha tiver sido preenchida
+                if (!string.IsNullOrWhiteSpace(usuario.Senha))
+                {
+                    usuarioBuscado.Senha = CriptografarUsuario.CriptografarSenha(usuario.Senha);
+                }
+
                 _context.Usuario.Update(usuarioBuscado);
                 await _context.SaveChangesAsync();
             }
-
         }
 
         public async Task<Usuario?> BuscarPorEmailESenha(string email, string senha)
@@ -43,7 +49,7 @@ namespace EventPlus.WebAPI.Repositories
 
             if (!senhaValida)
             {
-                return null;                
+                return null;
             }
 
             return usuario;
@@ -65,11 +71,16 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task Deletar(Guid id)
         {
-            var UsuarioBuscado = await _context.Usuario.FindAsync(id);
+            var usuarioBuscado = await _context.Usuario
+                .Include(u => u.Comentario)
+                .Include(u => u.Presenca)
+                .FirstOrDefaultAsync(u => u.IdUsuario == id);
 
-            if (UsuarioBuscado != null)
+            if (usuarioBuscado != null)
             {
-                _context.Usuario.Remove(UsuarioBuscado);
+                _context.Comentario.RemoveRange(usuarioBuscado.Comentario);
+                _context.Presenca.RemoveRange(usuarioBuscado.Presenca);
+                _context.Usuario.Remove(usuarioBuscado);
                 await _context.SaveChangesAsync();
             }
         }

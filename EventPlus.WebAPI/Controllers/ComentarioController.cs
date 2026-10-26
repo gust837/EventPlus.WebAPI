@@ -47,7 +47,7 @@ namespace EventPlus.WebAPI.Controllers
             }
             catch(Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.InnerException?.Message ?? ex.Message);
             }
         }
 

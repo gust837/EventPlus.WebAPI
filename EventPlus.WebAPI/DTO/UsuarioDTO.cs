@@ -1,32 +1,31 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace EventPlus.WebAPI.DTO;
 
 /// <summary>
-///Data Transfer Object (DTO) para cadastro e atualizção do perfil do Usuario 
+/// Data Transfer Object (DTO) para cadastro e atualização do perfil do Usuário
 /// </summary>
 public class UsuarioDTO
 {
     /// <summary>
-    /// Nome do usuario
+    /// Nome do usuário
     /// </summary>
-    [Required(ErrorMessage = "O titulo é obrigatorio")]
-    [StringLength(100, ErrorMessage = "O Nome pode ter no máximo 100 caracteres.")]
+    [Required(ErrorMessage = "O nome é obrigatório.")]
+    [StringLength(100, ErrorMessage = "O nome pode ter no máximo 100 caracteres.")]
     public string Nome { get; set; } = string.Empty;
 
     /// <summary>
-    /// Email do usuario
+    /// Email do usuário
     /// </summary>
-    [Required(ErrorMessage = "Campo obrigatorio")]
-    [EmailAddress(ErrorMessage = "O email é obrigatório.")]
+    [Required(ErrorMessage = "O email é obrigatório.")]
+    [EmailAddress(ErrorMessage = "Informe um email válido.")]
     public string Email { get; set; } = string.Empty;
 
     /// <summary>
-    /// Senha do usuario
+    /// Senha do usuário (obrigatória no cadastro; opcional na edição para manter a senha atual)
     /// </summary>
-    [Required(ErrorMessage = "A senha é obrigatória")]
-    [StringLength(60, MinimumLength = 8, ErrorMessage = "A senha deve ter entre 8 e 60 caracteres")]
-    public string Senha { get; set; } = string.Empty;
+    [StringLength(60, ErrorMessage = "A senha pode ter no máximo 60 caracteres.")]
+    public string? Senha { get; set; }
 
-    public Guid? IdTipoUsuario { get; set;  }
+    public Guid? IdTipoUsuario { get; set; }
 }
