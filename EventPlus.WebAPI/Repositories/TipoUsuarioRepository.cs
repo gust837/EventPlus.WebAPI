@@ -16,11 +16,20 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task Atualizar(Guid id, TipoUsuario tipoUsuario)
         {
+            var tituloLimpo = tipoUsuario.Titulo.Trim();
+            var jaExiste = await _context.TipoUsuario.AnyAsync(t =>
+                t.IdTipoUsuario != id && t.Titulo.ToLower() == tituloLimpo.ToLower());
+
+            if (jaExiste)
+            {
+                throw new InvalidOperationException("Já existe um tipo de usuário cadastrado com este título.");
+            }
+
             var tipoUsuarioBuscado = await _context.TipoUsuario.FindAsync(id);
 
             if (tipoUsuarioBuscado != null)
             {
-                tipoUsuarioBuscado.Titulo = tipoUsuario.Titulo;
+                tipoUsuarioBuscado.Titulo = tituloLimpo;
                 _context.TipoUsuario.Update(tipoUsuarioBuscado);
                 await _context.SaveChangesAsync();
             }
@@ -33,6 +42,16 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task Cadastrar(TipoUsuario tipoUsuario)
         {
+            var tituloLimpo = tipoUsuario.Titulo.Trim();
+            var jaExiste = await _context.TipoUsuario.AnyAsync(t =>
+                t.Titulo.ToLower() == tituloLimpo.ToLower());
+
+            if (jaExiste)
+            {
+                throw new InvalidOperationException("Já existe um tipo de usuário cadastrado com este título.");
+            }
+
+            tipoUsuario.Titulo = tituloLimpo;
             await _context.TipoUsuario.AddAsync(tipoUsuario);
             await _context.SaveChangesAsync();
         }

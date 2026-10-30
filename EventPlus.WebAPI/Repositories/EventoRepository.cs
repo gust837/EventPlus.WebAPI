@@ -16,13 +16,22 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task Atualizar(Guid id, Evento evento)
         {
+            var nomeLimpo = evento.NomeEvento.Trim();
+            var jaExiste = await _context.Evento.AnyAsync(e =>
+                e.IdEvento != id && e.NomeEvento.ToLower() == nomeLimpo.ToLower());
+
+            if (jaExiste)
+            {
+                throw new InvalidOperationException("Já existe um evento cadastrado com este nome.");
+            }
+
             var eventoBuscado = await _context.Evento.FindAsync(id);
 
             if (eventoBuscado != null)
             {
-                eventoBuscado.NomeEvento = evento.NomeEvento;
+                eventoBuscado.NomeEvento = nomeLimpo;
                 eventoBuscado.DataEvento = evento.DataEvento;
-                eventoBuscado.Descricao = evento.Descricao;
+                eventoBuscado.Descricao = evento.Descricao.Trim();
 
                 // Só substitui a imagem se uma nova imagem tiver sido enviada
                 if (!string.IsNullOrWhiteSpace(evento.ImagemUrl))
@@ -47,6 +56,17 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task Cadastrar(Evento evento)
         {
+            var nomeLimpo = evento.NomeEvento.Trim();
+            var jaExiste = await _context.Evento.AnyAsync(e =>
+                e.NomeEvento.ToLower() == nomeLimpo.ToLower());
+
+            if (jaExiste)
+            {
+                throw new InvalidOperationException("Já existe um evento cadastrado com este nome.");
+            }
+
+            evento.NomeEvento = nomeLimpo;
+            evento.Descricao = evento.Descricao.Trim();
             await _context.Evento.AddAsync(evento);
             await _context.SaveChangesAsync();
         }

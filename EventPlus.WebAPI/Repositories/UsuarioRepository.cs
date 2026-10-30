@@ -17,12 +17,21 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task Atualizar(Guid id, Usuario usuario)
         {
+            var emailLimpo = usuario.Email.Trim().ToLower();
+            var emailEmUso = await _context.Usuario.AnyAsync(u =>
+                u.IdUsuario != id && u.Email.ToLower() == emailLimpo);
+
+            if (emailEmUso)
+            {
+                throw new InvalidOperationException("Este endereço de e-mail já está em uso por outro usuário.");
+            }
+
             var usuarioBuscado = await _context.Usuario.FindAsync(id);
 
             if (usuarioBuscado != null)
             {
-                usuarioBuscado.Nome = usuario.Nome;
-                usuarioBuscado.Email = usuario.Email;
+                usuarioBuscado.Nome = usuario.Nome.Trim();
+                usuarioBuscado.Email = emailLimpo;
                 usuarioBuscado.IdTipoUsuario = usuario.IdTipoUsuario;
 
                 // Só altera a senha se uma nova senha tiver sido preenchida
@@ -38,7 +47,8 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task<Usuario?> BuscarPorEmailESenha(string email, string senha)
         {
-            var usuario = await _context.Usuario.FirstOrDefaultAsync(u => u.Email == email);
+            var emailLimpo = email.Trim().ToLower();
+            var usuario = await _context.Usuario.FirstOrDefaultAsync(u => u.Email.ToLower() == emailLimpo);
 
             if (usuario == null)
             {
@@ -62,6 +72,16 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task Cadastrar(Usuario usuario)
         {
+            var emailLimpo = usuario.Email.Trim().ToLower();
+            var emailEmUso = await _context.Usuario.AnyAsync(u => u.Email.ToLower() == emailLimpo);
+
+            if (emailEmUso)
+            {
+                throw new InvalidOperationException("Este endereço de e-mail já está cadastrado.");
+            }
+
+            usuario.Nome = usuario.Nome.Trim();
+            usuario.Email = emailLimpo;
             usuario.Senha = CriptografarUsuario.CriptografarSenha(usuario.Senha);
 
             await _context.Usuario.AddAsync(usuario);

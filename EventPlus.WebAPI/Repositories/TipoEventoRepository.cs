@@ -16,11 +16,20 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task Atualizar(Guid id, TipoEvento tipoEvento)
         {
+            var tituloLimpo = tipoEvento.Titulo.Trim();
+            var jaExiste = await _context.TipoEvento.AnyAsync(t =>
+                t.IdTipoEvento != id && t.Titulo.ToLower() == tituloLimpo.ToLower());
+
+            if (jaExiste)
+            {
+                throw new InvalidOperationException("Já existe um tipo de evento cadastrado com este título.");
+            }
+
             var tipoEventoBuscado = await _context.TipoEvento.FindAsync(id);
 
             if (tipoEventoBuscado != null)
             {
-                tipoEventoBuscado.Titulo = tipoEvento.Titulo;
+                tipoEventoBuscado.Titulo = tituloLimpo;
                 _context.TipoEvento.Update(tipoEventoBuscado);
                 await _context.SaveChangesAsync();
             }
@@ -33,6 +42,16 @@ namespace EventPlus.WebAPI.Repositories
 
         public async Task Cadastrar(TipoEvento tipoEvento)
         {
+            var tituloLimpo = tipoEvento.Titulo.Trim();
+            var jaExiste = await _context.TipoEvento.AnyAsync(t =>
+                t.Titulo.ToLower() == tituloLimpo.ToLower());
+
+            if (jaExiste)
+            {
+                throw new InvalidOperationException("Já existe um tipo de evento cadastrado com este título.");
+            }
+
+            tipoEvento.Titulo = tituloLimpo;
             await _context.TipoEvento.AddAsync(tipoEvento);
             await _context.SaveChangesAsync();
         }
