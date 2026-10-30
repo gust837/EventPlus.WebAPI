@@ -105,6 +105,13 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+// Cria o banco EventPlus e as tabelas automaticamente no container se ainda não existirem
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<EventContext>();
+    db.Database.EnsureCreated();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
